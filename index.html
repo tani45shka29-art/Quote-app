@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pro Quotes App</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-size: cover;
+    background-position: center;
+    transition: 0.5s;
+  }
+
+  .container {
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 15px;
+    width: 350px;
+    text-align: center;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+  }
+
+  select {
+    padding: 8px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: none;
+  }
+
+  .quote {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  .author {
+    opacity: 0.8;
+    margin-bottom: 20px;
+  }
+
+  button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .btn {
+    background: white;
+    color: black;
+  }
+
+  .favorite {
+    background: red;
+    color: white;
+  }
+</style>
+</head>
+
+<body id="body">
+
+<div class="container">
+  <h1>✨ Quotes App</h1>
+
+  <select onchange="changeCategory(this.value)">
+    <option value="all">All</option>
+    <option value="motivation">Motivation</option>
+    <option value="love">Love</option>
+    <option value="success">Success</option>
+  </select>
+
+  <div class="quote" id="quote"></div>
+  <div class="author" id="author"></div>
+
+  <button class="btn" onclick="newQuote()">New Quote</button>
+  <button class="favorite" onclick="saveFavorite()">❤️</button>
+  <button class="btn" onclick="shareQuote()">Share</button>
+</div>
+
+<script>
+const quotes = [
+  {text: "Push yourself, because no one else will do it.", author: "Unknown", category: "motivation"},
+  {text: "Dream big and dare to fail.", author: "Norman Vaughan", category: "motivation"},
+  
+  {text: "Love all, trust a few.", author: "William Shakespeare", category: "love"},
+  {text: "Where there is love, there is life.", author: "Mahatma Gandhi", category: "love"},
+
+  {text: "Success is not final, failure is not fatal.", author: "Winston Churchill", category: "success"},
+  {text: "Opportunities don't happen. You create them.", author: "Chris Grosser", category: "success"}
+];
+
+const backgrounds = {
+  motivation: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+  love: "https://images.unsplash.com/photo-1492724441997-5dc865305da7",
+  success: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
+  all: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+};
+
+let currentCategory = "all";
+let currentQuote = {};
+let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+function changeCategory(category) {
+  currentCategory = category;
+  document.body.style.backgroundImage = `url(${backgrounds[category]})`;
+  newQuote();
+}
+
+function newQuote() {
+  let filtered = currentCategory === "all"
+    ? quotes
+    : quotes.filter(q => q.category === currentCategory);
+
+  const random = Math.floor(Math.random() * filtered.length);
+  currentQuote = filtered[random];
+
+  document.getElementById("quote").innerText = `"${currentQuote.text}"`;
+  document.getElementById("author").innerText = "- " + currentQuote.author;
+}
+
+function saveFavorite() {
+  favorites.push(currentQuote);
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+  alert("Saved!");
+}
+
+function shareQuote() {
+  const text = `"${currentQuote.text}" - ${currentQuote.author}`;
+  navigator.clipboard.writeText(text);
+  alert("Copied! Share anywhere.");
+}
+
+// initial load
+changeCategory("all");
+</script>
+
+</body>
+</html>
